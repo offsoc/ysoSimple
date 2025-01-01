@@ -137,7 +137,7 @@ java -jar ysoSimple.jar -m YsoAttack
 java -jar ysoSimple.jar -m YsoAttack -g CommonsBeanutils2 -a "Templateslmpl:dnslog:whoami.dnslog.cn"
 ```
 
-每个模块除-g(-gadget)和-a(-args)俩个参数之外每个模块还有额外的参数，这些参数用于对利用链进行修饰(压缩/混淆/编码/存文件)。在wiki的模块介绍中都会详细说明。
+每个模块除-g(-gadget)和-a(-args)俩个参数之外每个模块还有额外的参数，这些参数用于对利用链进行修饰(压缩/混淆/编码/存文件)。在[ysoSimple-wiki](ysoSimple-Wiki.md)的模块介绍中都会详细说明。
 
 JNDIAttack模块启动
 
@@ -155,7 +155,7 @@ java -jar ysoSimple.jar -help YsoAttack
 
 ## c.详细使用
 
-具体的使用方式见wiki文档
+具体的使用方式见[ysoSimple-wiki](ysoSimple-Wiki.md)文档
 
 # 0x03 工具打包
 
@@ -183,4 +183,12 @@ mvn clean package -DskipTests
 
 [https://github.com/SummerSec/ShiroAttack2](https://github.com/SummerSec/ShiroAttack2)
 
-‍
+https://github.com/kezibei/Urldns
+
+‍[https://y4tacker.github.io/2023/03/20/year/2023/3/FastJson 与原生反序列化/](https://y4tacker.github.io/2023/03/20/year/2023/3/FastJson与原生反序列化/)
+
+[https://y4tacker.github.io/2023/04/26/year/2023/4/FastJson 与原生反序列化-二/](https://y4tacker.github.io/2023/04/26/year/2023/4/FastJson与原生反序列化-二/)
+
+https://github.com/X1r0z/hessian-utf-8-overlong-encoding
+
+http://www.bmth666.cn/2024/11/03/Shiro%E7%BB%95%E8%BF%87Header%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E8%BF%9B%E9%98%B6%E5%88%A9%E7%94%A8/
