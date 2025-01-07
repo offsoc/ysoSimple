@@ -41,7 +41,7 @@ public class GeneratePayload {
         ysoOptions.addOption("a", "args", true, "Gadget parameters");
         ysoOptions.addOption("ddl", "dirt-data-length", true, "Add the length of dirty data To Bypass WAF");
         ysoOptions.addOption("gz","gzip",false,"Gzip Java Serialize Payload");
-        ysoOptions.addOption("um", "utf8-bytes-mix", false, "UTF-8 Overlong Encoding To Bypass WAF");
+        ysoOptions.addOption("um", "utf8-bytes-mix", true, "UTF-8 Overlong Encoding To Bypass WAF");
         ysoOptions.addOption("c", "compress", false, "Zip the TemplatesImpl Gadget");
         ysoOptions.addOption("sk", "shiro-key", true, "Shiro Encrypt AES Key");
         ysoOptions.addOption("sp", "shiro-encrypt-pattern", true, "Shiro Encrypt AES CBC/GCM Pattern");
