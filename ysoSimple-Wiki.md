@@ -1129,7 +1129,7 @@ HessianLite 3.2.11版本的Hessian2Input#except方法中存在反序列化的obj
 
 ![image-20250105135753451](images/image-20250105135753451.png)
 
-并且在上面讲黑名单的时候也提到过HessianLite自3.2.12开始已经将`javax.swing.*`包下的类都加入到黑名单中，所以`javax.swing.UIDefaults`的相关攻击链都不能进行利用。![image-20250105135808985](ysoSimple-Wiki.assets/image-20250105135808985.png)
+并且在上面讲黑名单的时候也提到过HessianLite自3.2.12开始已经将`javax.swing.*`包下的类都加入到黑名单中，所以`javax.swing.UIDefaults`的相关攻击链都不能进行利用。![image-20250107190754377](images/image-20250107190754377.png)
 
 #### toString利用链(PKCS9Attributes & MimeTypeParameterList)
 
