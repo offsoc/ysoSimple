@@ -165,7 +165,13 @@ Requires Java 1.7+ and Maven 3.x+
 mvn clean package -DskipTests
 ```
 
-# 0x04 感谢
+#  0x04 免责申明
+
+**ysoSimple** 工具仅用于个人研究和学习目的，禁止将其用于任何非法活动或未经授权的行为。本项目的开发者、提供者和维护者不对使用者因工具的使用而产生的行为及后果承担任何责任，所有风险由使用者自行承担。
+
+**ysoSimple** is strictly for personal research and educational purposes only. It is prohibited to use this tool for illegal activities or unauthorized actions.The developers, providers, and maintainers of this project bear no responsibility for the actions and consequences arising from the use of this tool. Users assume all risks associated with its usage.
+
+# 0x05 感谢
 
 [https://github.com/woodpecker-framework/ysoserial-for-woodpecker](https://github.com/woodpecker-framework/ysoserial-for-woodpecker)
 
