@@ -105,9 +105,11 @@ public class ThirdPartyConfig extends Config {
                 String jarPayload = cmdLine.getOptionValue("jarPayload");
                 byte[] classJarPayload = null;
                 if (jarPayload.equals("ScriptEngineFactory")){
-                    object = (Object[]) ClassHandleUtil.addInterfaceForClass(classByteName,classByteCode, ScriptEngineFactory.class.getName());
                     classByteCode = (byte[])object[1];
                     classJarPayload = JarPayload.createWithSPI(classByteName, classByteCode);
+                } else if (jarPayload.equals("JSVGJar")){
+                    classByteCode = (byte[])object[1];
+                    classJarPayload = JarPayload.createWithJSVG(classByteName, classByteCode);
                 } else if (jarPayload.equals("CommonJar")) {
                     classJarPayload = JarPayload.create(classByteName,classByteCode);
                 }
