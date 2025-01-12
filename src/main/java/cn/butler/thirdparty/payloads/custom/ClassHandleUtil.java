@@ -1,7 +1,6 @@
 package cn.butler.thirdparty.payloads.custom;
 
 import javassist.*;
-
 import java.io.IOException;
 
 public class ClassHandleUtil {
@@ -133,5 +132,4 @@ public class ClassHandleUtil {
             throw new RuntimeException(e);
         }
     }
-
 }

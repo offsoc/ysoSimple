@@ -4,14 +4,10 @@ import cn.butler.jndi.JndiConfig;
 import cn.butler.payloads.ObjectPayload;
 import cn.butler.thirdparty.payloads.JarHandle.JarPayload;
 import cn.butler.thirdparty.payloads.custom.ClassHandleUtil;
-import javassist.ClassPool;
-import javassist.CtClass;
 import cn.butler.jndi.annotation.JNDIMapping;
 import cn.butler.jndi.controller.DatabaseController;
 import cn.butler.jndi.server.WebServer;
-import cn.butler.jndi.template.DerbyJarTemplate;
 import cn.butler.jndi.util.MiscUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
