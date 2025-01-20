@@ -21,7 +21,7 @@ import static cn.butler.yso.payloads.util.Reflections.setFieldValue;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Dependencies({"commons-beanutils:commons-beanutils:1.9.2","commons-logging:commons-logging:1.2"})
-@Authors({ Authors.PHITHON })
+@Authors({ Authors.B0T1ER })
 public class CommonsBeanutils2_110 implements ObjectPayload<Object> {
 
     public Object getObject(String command) throws Exception {
