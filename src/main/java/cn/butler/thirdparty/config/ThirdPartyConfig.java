@@ -87,9 +87,11 @@ public class ThirdPartyConfig extends Config {
             //对字节码进行FileModify处理
             if(cmdLine.hasOption("fileModify")) {
                 String fileModifyResult = "Currently only supports XSTL file Modify";
-                String encodeType = cmdLine.getOptionValue("fileModify");
-                if(encodeType.equals("XSTL")){
+                String fileModifyType = cmdLine.getOptionValue("fileModify");
+                if(fileModifyType.equals("XSTL")){
                     fileModifyResult = FileHandleUtil.XSTLModilfyClass(classByteName,classByteCode);
+                } else if (fileModifyType.equals("ClassPathXml")) {
+                    fileModifyResult = FileHandleUtil.ClassPathXmlModilfyClass(classByteName,classByteCode);
                 }
                 if (cmdLine.hasOption("writeToFile")){
                     String fileName = cmdLine.getOptionValue("writeToFile");

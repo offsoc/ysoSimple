@@ -168,10 +168,11 @@ resin
 undertow
 Jboss
 Wildfly
+netty
 jindie
 tongweb
 bes
-netty
+
 ```
 
 **利用链**
@@ -586,7 +587,7 @@ C3P0依赖下的Java反序列化有3种类型的攻击链：关于C3P0的些打�
 
 ## 2.Hessian反序列化(​HessianAttack)
 
-#### Hessian的知识
+### Hessian的知识
 
 Hessian本身涉及多个系列(如下)：Hessian的版本在黑名单有区别，然后Hessian1和Hessian2的序列化机制略微有所区别。Hessian1是指Cacuho Hessian组件中的HessianInput和HessianOutput用的序列化机制，所以针对目标环境攻击时候要分清楚到底是Hessian1还是Hessian2，以构造不同的EXP。
 
@@ -597,19 +598,19 @@ Hessian本身涉及多个系列(如下)：Hessian的版本在黑名单有区别�
 
 我当时学Hessian是跟着Longofo师傅的[Hessian 反序列化及相关利用链](https://paper.seebug.org/1131/)文章学习的。
 
-##### caucho-hessian黑名单
+#### caucho-hessian黑名单
 
 版本hessian-4.0.66在 `com.caucho.hessian.io.ClassFactory#isAllow(java.lang.String)`​ 下断点看看都拦截了哪些类：默认的_allowList为空，所以只会进行一层_staticDenyList的判断，后面俩个名单的判断不进行，黑名单类如下：
 
 ![image-20250105135452101](images/image-20250105135452101.png)
 
-##### sofa-hessian黑名单
+#### sofa-hessian黑名单
 
 [sofa-hessian](https://github.com/sofastack/sofa-hessian)（sofahessian）[https://mvnrepository.com/artifact/com.alipay.sofa/hessian](https://mvnrepository.com/artifact/com.alipay.sofa/hessian)
 
 * 黑名单：[https://github.com/sofastack/sofa-hessian/blob/master/src/main/resources/security/serialize.blacklist](https://github.com/sofastack/sofa-hessian/blob/master/src/main/resources/security/serialize.blacklist)
 
-##### hessian-lite黑名单
+#### hessian-lite黑名单
 
 [hessian-lite](https://github.com/apache/dubbo-hessian-lite)（hessianlite）[https://mvnrepository.com/artifact/com.alibaba/hessian-lite](https://mvnrepository.com/artifact/com.alibaba/hessian-lite)
 
@@ -1159,6 +1160,12 @@ MimeTypeParameterList#toString()
 ```
 
 但是这种打法不如Hessian反序列化触发HashMap的readObject然后引发UIDefaults#get(Object key)来的直接，所以目前还没集成
+
+###  还未集成的链子(Other)
+
+在一些CTF和文章中学到关于Hessian还有其他的链子，这里收集下：
+
+https://quick-mascara-699.notion.site/Syclover-SUCTF-WP-177370c566a481ff9a01ebed7f0c87f8
 
 ## 3.XStream 反序列化(​XStreamAttack)
 
@@ -2585,6 +2592,7 @@ rmi://127.0.0.1:1234/Basic
 * fileModify：将生成的字节码转存特殊的文件格式中，XSTL文件转存
 
   * XSTL：将字节码放入XSTL文件中方便使用，Hessian反序列化利用链XSTL需要
+  * ClassPathXml：将字节码放入xml文件中方便使用，ClassPathXmlApplicationContext实例化RCE需要
 * jarPayload：ScriptEngineFactory，CommonJar
 
   * ScriptEngineFactory的SPI类型Jar包输出，内部执行Java代码
@@ -2634,12 +2642,20 @@ rmi://127.0.0.1:1234/Basic
 
 #### fileModify 转存特殊格式文件
 
-描述：将生成的字节码转存特殊的文件格式中，XSTL文件转存，Hessian反序列化有XSTL文件加载的利用链
+描述：将生成的字节码转存特殊的文件格式中，XSTL文件转存，Hessian反序列化有XSTL文件加载的利用链。ClassPathXml，生成ClassPathXmlApplicationContext解析的XML文件
 
 工具：使用fileModify参数，可以使用writeToFile参数输出到文件
 
+生成XSTL文件
+
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -fileModify "XSTL" -writeToFile "/tmp/evil.xstl"
+```
+
+生成ClassPathXmlApplicationContext解析的XML文件
+
+```python
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -fileModify "ClassPathXml" -writeToFile "/tmp/evil.xstl"
 ```
 
 #### jarPayload Jar包类型Payload输出
