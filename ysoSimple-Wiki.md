@@ -1346,6 +1346,8 @@ SnakeYaml系列的一些打法可以参考我写的这篇文章：[2023 华北�
 
 ```java
 -m SnakeYamlAttack -g H2DataBase -a "H2CreateAlias:auto_cmd:calc"
+    
+-m SnakeYamlAttack -g H2DataBase -a "H2CreateAlias:springframework_echo:id"
 ```
 
 ###  MarshalOutputStream 利用链
@@ -2828,6 +2830,7 @@ rmi://127.0.0.1:1234/Basic
 
   * [ ] class_file 从系统路径中注入class文件，执行class代码
   * [ ] class_base64 注入class base64编码内容，执行class代码
+* [ ] springframework_echo 生成SpringFramework的Runtime命令回显代码
 
 ### Java代码漏洞利用效果参数
 
@@ -2860,6 +2863,7 @@ rmi://127.0.0.1:1234/Basic
 
   * [ ] class_file 从系统路径中注入class文件，执行class代码
   * [ ] class_base64 注入class base64编码内容，执行class代码
+* [ ] springframework_echo 生成SpringFramework的Runtime命令回显代码
 
 ### (一些注意事项)
 

