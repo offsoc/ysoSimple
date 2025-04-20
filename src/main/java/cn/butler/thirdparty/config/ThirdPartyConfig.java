@@ -4,6 +4,7 @@ import cn.butler.payloads.ObjectPayload;
 import cn.butler.payloads.config.Config;
 import cn.butler.thirdparty.payloads.custom.ClassHandleUtil;
 import cn.butler.thirdparty.payloads.custom.FileHandleUtil;
+import cn.butler.thirdparty.payloads.expression.GroovyExpression;
 import cn.butler.utils.FileUtils;
 import me.gv7.woodpecker.bcel.HackBCELs;
 import cn.butler.thirdparty.payloads.JarHandle.JarPayload;
@@ -74,6 +75,8 @@ public class ThirdPartyConfig extends Config {
                 } else if(encodeType.equals("SPEL-JSCode-JavaCode")){
                     String jsJavaCode = JSExpression.commonExpressModify(classByteCode);
                     encodeResult = SpelExpression.expressModify(jsJavaCode);
+                } else if (encodeType.equals("GroovyShell-JSCode-JavaCode")) {
+                    encodeResult = GroovyExpression.groovyShellExpressModify(classByteCode);
                 }
                 if (cmdLine.hasOption("writeToFile")){
                     String fileName = cmdLine.getOptionValue("writeToFile");

@@ -2661,6 +2661,7 @@ rmi://127.0.0.1:1234/Basic
 
   * JS-JavaCode：JS执行Java代码
   * SPEL-JSCode-JavaCode：SPEL使用JS表达式执行Java代码
+  * GroovyShell-JSCode-JavaCode：GroovyShell使用JS表达式执行Java代码，JS表达式使用Unsafe调用Java代码模式才能在Groovy中执行成功
 * fileModify：将生成的字节码转存特殊的文件格式中，XSTL文件转存
 
   * XSTL：将字节码放入XSTL文件中方便使用，Hessian反序列化利用链XSTL需要
@@ -2706,10 +2707,12 @@ rmi://127.0.0.1:1234/Basic
 
 描述：将生成的字节码进行编码输出，Hex，Base64，BCEL编码。或者套用JS-JavaCode模板，SPEL-JSCode模板
 
-工具：使用encode参数，后面跟着Base64，Hex，BCEL，JS-JavaCode，SPEL-JSCode-JavaCode
+工具：使用encode参数，后面跟着Base64，Hex，BCEL，JS-JavaCode，SPEL-JSCode-JavaCode，GroovyShell-JSCode-JavaCode
 
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "BCEL"
+
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "GroovyShell-JSCode-JavaCode"
 ```
 
 #### fileModify 转存特殊格式文件
