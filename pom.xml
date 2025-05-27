@@ -9,7 +9,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>4.1.4.RELEASE</spring.version>
+        <spring.version>6.1.14</spring.version>
 	</properties>
 
 	<build>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>2.14.0</version>
         </dependency>
 		<dependency>
 			<artifactId>remoting</artifactId>
@@ -163,7 +163,7 @@
 		<dependency>
 			<groupId>org.jboss.remoting</groupId>
 			<artifactId>jboss-remoting</artifactId>
-			<version>4.0.19.Final</version>
+			<version>5.0.20.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss</groupId>
@@ -233,28 +233,28 @@
         <dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.2</version>
+			<version>1.10.1</version>
 <!--            <version>1.5</version>-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>4.0</version>
+			<version>4.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
-			<version>2.3.9</version>
+			<version>2.4.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<version>6.2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.1.4.RELEASE</version>
+			<version>5.2.22.RELEASE</version>
 		</dependency>
 
         <dependency>
@@ -271,7 +271,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.3.11.Final</version>
+			<version>5.3.20.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -297,7 +297,7 @@
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.5.2</version>
+			<version>0.11.0-pre2</version>
 <!--            <version>0.9.2-pre2-RELEASE</version>-->
 		</dependency>
 		<dependency>
@@ -313,7 +313,7 @@
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
+			<version>2.7.3</version>
 		</dependency>
 		<dependency>
 			<groupId>rome</groupId>
@@ -323,7 +323,7 @@
         <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
-            <version>2.5.2</version>
+            <version>2.7.2</version>
         </dependency>
 		<dependency>
 			<groupId>rhino</groupId>
@@ -373,12 +373,12 @@
 		<dependency>
 			<groupId>org.clojure</groupId>
 			<artifactId>clojure</artifactId>
-			<version>1.8.0</version>
+			<version>1.11.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-			<version>7.7.14</version>
+			<version>7.7.24</version>
 		</dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -397,7 +397,7 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.16</version>
+            <version>1.4.21</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
         <dependency>
@@ -410,7 +410,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.48</version>
+            <version>1.2.83</version>
         </dependency>
 
         <!-- dependency for FastJson2 Gadget -->
@@ -431,7 +431,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.1</version>
+            <version>42.3.9</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
@@ -469,19 +469,19 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>9.0.52</version>
+            <version>9.0.104</version>
         </dependency>
 
         <!--Shiro Crypto-->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-            <version>1.2.4</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.13</version>
+            <version>5.8.21</version>
         </dependency>
 
         <!--ASM-->
@@ -568,7 +568,7 @@
 				<dependency>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-core</artifactId>
-					<version>5.0.7.Final</version>
+					<version>5.3.20.Final</version>
 				</dependency>
                 <dependency>
                     <groupId>javax.el</groupId>
@@ -620,7 +620,7 @@
 				<dependency>
 				    <groupId>com.alibaba</groupId>
 					<artifactId>fastjson</artifactId>
-					<version>1.2.48</version>
+					<version>1.2.83</version>
 				</dependency>
 
 				<!-- dependency for c3p0 tomcat gadget chain -->
@@ -628,7 +628,7 @@
 				<dependency>
 				    <groupId>org.apache.tomcat</groupId>
 					<artifactId>tomcat-catalina</artifactId>
-				    <version>9.0.52</version>
+				    <version>9.0.104</version>
 				</dependency>
 
 			</dependencies>
