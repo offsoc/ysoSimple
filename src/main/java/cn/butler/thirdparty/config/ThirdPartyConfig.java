@@ -75,8 +75,12 @@ public class ThirdPartyConfig extends Config {
                 } else if(encodeType.equals("SPEL-JSCode-JavaCode")){
                     String jsJavaCode = JSExpression.commonExpressModify(classByteCode);
                     encodeResult = SpelExpression.expressModify(jsJavaCode);
-                } else if (encodeType.equals("GroovyShell-JSCode-JavaCode")) {
-                    encodeResult = GroovyExpression.groovyShellExpressModify(classByteCode);
+                } else if(encodeType.equals("Groovy-JavaCode-UtilBase64")){
+                    encodeResult = GroovyExpression.groovyShellExpressModifyUtilBase64(classByteCode);
+                } else if (encodeType.equals("Groovy-JavaCode-MiscBase64")){
+                    encodeResult = GroovyExpression.groovyShellExpressModifyMiscBase64(classByteCode);
+                } else if (encodeType.equals("Groovy-JSCode-JavaCode")) {
+                    encodeResult = GroovyExpression.groovyShellExpressModifyByJSCode(classByteCode);
                 }
                 if (cmdLine.hasOption("writeToFile")){
                     String fileName = cmdLine.getOptionValue("writeToFile");

