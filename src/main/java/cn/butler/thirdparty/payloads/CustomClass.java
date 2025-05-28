@@ -51,6 +51,7 @@ public class CustomClass implements ObjectPayload<Object> {
             constructor.setBody("{}"); // 给构造方法添加一个空的方法体
             constructor.insertAfter(cmd); // 在构造方法前插入代码
             ctClass.makeClassInitializer().insertBefore(String.format("new %s();",tmplClazzName));
+            ctClass.getClassFile().setVersionToJava5();
             classBytes = ctClass.toBytecode();
         }
 
