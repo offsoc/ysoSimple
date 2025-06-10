@@ -31,5 +31,6 @@ public class CommandConstant {
     public final static String COMMAND_SHIRO_SPRING_LOADCLASS = "shiro_spring_loadclass:";
     public final static String COMMAND_UNSAFE_DEFINEANONYMOUSCLASS = "unsafe_defineanonymousclass:";
     public final static String COMMAND_CLASSLOADER_DEFINECLASS = "classloader_defineclass:";
+    public final static String COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS = "bypassmodule_classloader_defineclass:";
     public final static String COMMAND_SPRINGFRAMEWORK_ECHO = "springframework_echo:";
 }

